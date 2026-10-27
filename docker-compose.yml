@@ -1,4 +1,4 @@
-﻿version: '3.8'
+version: '3.8'
 
 services:
   db:
@@ -6,15 +6,15 @@ services:
     container_name: vahanone-postgres
     restart: unless-stopped
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgrespassword
-      POSTGRES_DB: vahanone_db
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgrespassword}
+      POSTGRES_DB: ${POSTGRES_DB:-vahanone_db}
     ports:
-      - "5432:5432"
+      - "${POSTGRES_PORT:-5432}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d vahanone_db"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-vahanone_db}"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -29,24 +29,36 @@ services:
       db:
         condition: service_healthy
     environment:
-      DATABASE_URL: postgresql://postgres:postgrespassword@db:5432/vahanone_db
-      JWT_SECRET_KEY: ${JWT_SECRET_KEY:-your_development_jwt_secret_key_change_in_production_32_chars}
-      JWT_ALGORITHM: HS256
-      ACCESS_TOKEN_EXPIRE_MINUTES: 60
-      ENABLE_REMINDER_SCHEDULER: "true"
+      DATABASE_URL: ${DATABASE_URL:-postgresql+psycopg://postgres:postgrespassword@db:5432/vahanone_db}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:-vahanone_dev_secret_key_change_in_production_min_32_chars}
+      JWT_ALGORITHM: ${JWT_ALGORITHM:-HS256}
+      ACCESS_TOKEN_EXPIRE_MINUTES: ${ACCESS_TOKEN_EXPIRE_MINUTES:-60}
+      ENABLE_REMINDER_SCHEDULER: ${ENABLE_REMINDER_SCHEDULER:-true}
+      SEED_DEMO_DATA: ${SEED_DEMO_DATA:-true}
     ports:
-      - "8000:8000"
+      - "${BACKEND_PORT:-8000}:8000"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/ || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
 
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost:8000}
+        VITE_SUPABASE_URL: ${VITE_SUPABASE_URL:-http://localhost:8000}
+        VITE_SUPABASE_ANON_KEY: ${VITE_SUPABASE_ANON_KEY:-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.e30.local_token}
     container_name: vahanone-frontend
     restart: unless-stopped
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
     ports:
-      - "80:80"
+      - "${FRONTEND_PORT:-80}:80"
 
 volumes:
   postgres_data:

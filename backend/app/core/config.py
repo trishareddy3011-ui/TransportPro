@@ -14,6 +14,8 @@ class Settings(BaseSettings):
     admin_role_name: str = "admin"
     enable_reminder_scheduler: bool = False
     reminder_scheduler_interval_minutes: int = 60
+    cors_origins: str = "*"
+    seed_demo_data: bool = True
 
 
 settings = Settings()

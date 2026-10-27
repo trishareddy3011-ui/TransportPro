@@ -307,7 +307,7 @@ class Booking(Base, TimestampMixin, TenantMixin):
     )
 
 
-class TripStatusEnum(str):
+class TripStatusEnum(str, enum.Enum):
     PENDING = 'pending'
     ONGOING = 'ongoing'
     COMPLETED = 'completed'
@@ -352,7 +352,17 @@ class Trip(Base, TimestampMixin, TenantMixin):
     trip_revenue: Mapped[Optional[float]] = mapped_column(Numeric(12, 2), nullable=True)
     start_time: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True, index=True)
     end_time: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True, index=True)
-    status: Mapped[str] = mapped_column(String(32), nullable=False, server_default=TripStatusEnum.PENDING)
+    status: Mapped[str] = mapped_column(
+        SQLEnum(
+            TripStatusEnum,
+            name='trip_status',
+            native_enum=True,
+            values_callable=lambda enum_cls: [e.value for e in enum_cls],
+            validate_strings=True,
+        ),
+        nullable=False,
+        server_default=TripStatusEnum.PENDING.value,
+    )
     notes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
 
     booking: Mapped[Booking] = relationship('Booking', back_populates='trips')

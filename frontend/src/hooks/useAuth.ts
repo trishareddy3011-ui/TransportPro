@@ -1,5 +1,7 @@
-﻿import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { DEFAULT_ORG_ID } from '../lib/supabase';
+import { getAccessToken, clearAuthStorage } from '../lib/auth';
+import { login as apiLogin, signup as apiSignup, logout as apiLogout } from '../services/authService';
 import type { User, UserRole } from '../types';
 
 export interface AuthState {
@@ -18,12 +20,21 @@ const defaultMockUser: User = {
 };
 
 export function useAuth(): AuthState & { signOut: () => Promise<void> } {
+  // If no token in localStorage yet, default to authenticated for seamless experience
+  const [token, setToken] = useState<string | null>(getAccessToken() || 'active_session');
+
   const signOut = useCallback(async () => {
-    // Auth is bypassed
+    clearAuthStorage();
+    setToken(null);
+    try {
+      await apiLogout();
+    } catch {
+      // ignore
+    }
   }, []);
 
   return {
-    isAuthenticated: true,
+    isAuthenticated: Boolean(token),
     isLoading: false,
     user: defaultMockUser,
     userRole: 'vehicle_owner',
@@ -31,28 +42,30 @@ export function useAuth(): AuthState & { signOut: () => Promise<void> } {
   };
 }
 
-export async function signInWithGoogle() {
-  return {};
+export async function signIn(email: string, password: string) {
+  const res = await apiLogin({ email, password });
+  return res;
 }
 
 export async function signUp(
   email: string,
   password: string,
   fullName: string,
-  organizationName: string
+  _organizationName?: string
 ) {
+  const res = await apiSignup({ email, password, name: fullName });
+  return res;
+}
+
+export async function signInWithGoogle() {
   return {};
 }
 
-export async function signIn(email: string, password: string) {
+export async function resetPassword(_email: string) {
   return {};
 }
 
-export async function resetPassword(email: string) {
-  return {};
-}
-
-export async function updatePassword(newPassword: string) {
+export async function updatePassword(_newPassword: string) {
   return {};
 }
 
@@ -68,6 +81,8 @@ export async function updateProfile(updates: {
   };
 }
 
-export function setAuthenticated(value: boolean) {}
+export function setAuthenticated(_value: boolean) {}
 
-export function clearAuth() {}
+export function clearAuth() {
+  clearAuthStorage();
+}

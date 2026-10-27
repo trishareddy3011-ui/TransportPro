@@ -1,4 +1,4 @@
-﻿FROM python:3.11-slim
+FROM python:3.11-slim
 
 WORKDIR /app
 
@@ -20,9 +20,14 @@ RUN pip install --no-cache-dir --upgrade pip && \
 
 # Copy application code
 COPY . .
+RUN chmod +x /app/entrypoint.sh
 
 # Expose port
 EXPOSE 8000
 
-# Run FastAPI app with Uvicorn
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Health check
+HEALTHCHECK --interval=10s --timeout=5s --start-period=15s --retries=5 \
+    CMD curl -f http://localhost:8000/ || exit 1
+
+# Run entrypoint script (runs migrations, seeds demo data, starts uvicorn)
+ENTRYPOINT ["/app/entrypoint.sh"]

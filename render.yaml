@@ -1,17 +1,19 @@
-﻿databases:
+databases:
   - name: vahanone-db
     databaseName: vahanone_db
     user: vahanone_user
     plan: free
 
 services:
+  # 1. FastAPI Backend Web Service
   - type: web
     name: vahanone-backend
     runtime: python
     plan: free
     rootDir: backend
     buildCommand: pip install -r requirements.txt
-    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    startCommand: sh -c "alembic upgrade head && python seed_demo_data.py && uvicorn app.main:app --host 0.0.0.0 --port $PORT"
+    healthCheckPath: /
     envVars:
       - key: DATABASE_URL
         fromDatabase:
@@ -23,7 +25,43 @@ services:
         value: HS256
       - key: ACCESS_TOKEN_EXPIRE_MINUTES
         value: "60"
+      - key: REFRESH_TOKEN_EXPIRE_DAYS
+        value: "30"
+      - key: DEFAULT_USER_ROLE
+        value: member
+      - key: ADMIN_ROLE_NAME
+        value: admin
       - key: ENABLE_REMINDER_SCHEDULER
         value: "true"
       - key: REMINDER_SCHEDULER_INTERVAL_MINUTES
         value: "60"
+      - key: SEED_DEMO_DATA
+        value: "true"
+      - key: CORS_ORIGINS
+        value: "*"
+
+  # 2. React Vite Frontend Static Site
+  - type: web
+    name: vahanone-frontend
+    runtime: static
+    plan: free
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_API_BASE_URL
+        fromService:
+          type: web
+          name: vahanone-backend
+          property: host
+      - key: VITE_SUPABASE_URL
+        fromService:
+          type: web
+          name: vahanone-backend
+          property: host
+      - key: VITE_SUPABASE_ANON_KEY
+        value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.e30.production_token

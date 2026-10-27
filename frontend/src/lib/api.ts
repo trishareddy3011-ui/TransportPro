@@ -1,7 +1,11 @@
 import axios, { AxiosError, AxiosRequestConfig } from 'axios';
 import { getAccessToken, getRefreshToken, saveTokens, logout } from './auth';
 
-export const baseURL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+let rawBaseURL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+if (rawBaseURL && !rawBaseURL.startsWith('http://') && !rawBaseURL.startsWith('https://')) {
+  rawBaseURL = `https://${rawBaseURL}`;
+}
+export const baseURL = rawBaseURL;
 
 const api = axios.create({
   baseURL,
