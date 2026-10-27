@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VahanOne — Visual Architecture & Interview Presentation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        slate: {
+                            850: '#151e2e',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'default',
+            securityLevel: 'loose',
+            flowchart: { useMaxWidth: false, htmlLabels: true },
+            sequence: { useMaxWidth: false },
+            er: { useMaxWidth: false }
+        });
+    </script>
+    <style>
+        .mermaid svg {
+            margin: 0 auto;
+            max-width: 100% !important;
+            height: auto;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-sans antialiased">
+    <!-- Top Nav -->
+    <header class="sticky top-0 z-50 bg-white/90 dark:bg-slate-900/90 backdrop-blur border-b border-slate-200 dark:border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-9 h-9 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold text-lg shadow-sm">
+                    V
+                </div>
+                <div>
+                    <h1 class="text-base font-bold text-slate-900 dark:text-white leading-tight">VahanOne</h1>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Technical Interview & System Architecture Guide</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-4">
+                <a href="./INTERVIEW_GUIDE.md" target="_blank" class="text-xs bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 font-medium px-3 py-1.5 rounded-md hover:bg-indigo-100 transition">
+                    View Interview Q&A Guide
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="lg:grid lg:grid-cols-12 lg:gap-8">
+            <!-- Sidebar Navigation -->
+            <aside class="hidden lg:block lg:col-span-3">
+                <div class="sticky top-24 space-y-1 bg-white dark:bg-slate-850 p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm max-h-[85vh] overflow-y-auto">
+                    <p class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 px-3">Architecture Topics</p>
+                    
+        <a href="#sys-arch" class="flex items-center px-3 py-2 text-sm font-medium rounded-lg text-slate-700 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-slate-800 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
+            1. System Architecture
+        </a>
+    
+        <a href="#backend-flow" class="flex items-center px-3 py-2 text-sm font-medium rounded-lg text-slate-700 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-slate-800 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
+            2. Layered Backend Flow
+        </a>
+    
+        <a href="#auth-multi" class="flex items-center px-3 py-2 text-sm font-medium rounded-lg text-slate-700 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-slate-800 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
+            3. Auth & Multi-Tenancy
+        </a>
+    
+        <a href="#db-er" class="flex items-center px-3 py-2 text-sm font-medium rounded-lg text-slate-700 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-slate-800 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
+            4. Database ER Diagram
+        </a>
+    
+        <a href="#booking-life" class="flex items-center px-3 py-2 text-sm font-medium rounded-lg text-slate-700 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-slate-800 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
+            5. Booking Lifecycle
+        </a>
+    
+        <a href="#invoice-gst" class="flex items-center px-3 py-2 text-sm font-medium rounded-lg text-slate-700 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-slate-800 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
+            6. Invoice & GST Flow
+        </a>
+    
+        <a href="#profit-engine" class="flex items-center px-3 py-2 text-sm font-medium rounded-lg text-slate-700 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-slate-800 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
+            7. Profit Engine Flow
+        </a>
+    
+        <a href="#compliance-sched" class="flex items-center px-3 py-2 text-sm font-medium rounded-lg text-slate-700 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-slate-800 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
+            8. Compliance Scheduler
+        </a>
+    
+        <a href="#frontend-flow" class="flex items-center px-3 py-2 text-sm font-medium rounded-lg text-slate-700 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-slate-800 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
+            9. Frontend Flow
+        </a>
+    
+        <a href="#cicd-deploy" class="flex items-center px-3 py-2 text-sm font-medium rounded-lg text-slate-700 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-slate-800 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
+            10. CI/CD & Deployment
+        </a>
+    
+        <a href="#user-journey" class="flex items-center px-3 py-2 text-sm font-medium rounded-lg text-slate-700 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-slate-800 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
+            11. Fleet Owner Journey
+        </a>
+    
+                </div>
+            </aside>
+
+            <!-- Main Content Area -->
+            <main class="lg:col-span-9">
+                <div class="bg-white dark:bg-slate-850 p-6 sm:p-8 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                    <div class="mb-10 pb-6 border-b border-slate-200 dark:border-slate-800">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-300 mb-2">
+                            Production Verified
+                        </span>
+                        <h1 class="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">Full-Stack System Architecture Diagrams</h1>
+                        <p class="mt-2 text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
+                            Comprehensive visual representations of VahanOne's backend, multi-tenancy, data schemas, booking conflict engines, profit aggregation, and cloud deployment pipelines based on the live codebase.
+                        </p>
+                    </div>
+
+                    
+        <section id="sys-arch" class="scroll-mt-20 mb-16 pb-12 border-b border-slate-200 dark:border-slate-800">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">1. System Architecture</h2>
+                <a href="#sys-arch" class="text-xs text-indigo-500 hover:underline">Link</a>
+            </div>
+            <div class="mb-6">
+                
+        <div class="my-4 bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-x-auto">
+            <pre class="mermaid text-center">
+graph TD
+    subgraph Client["Client Browser"]
+        SPA["React 18 + Vite SPA<br/>(Client-Side Routing, React Hooks, Tailwind CSS)"]
+    end
+
+    subgraph DockerCompose["Docker Compose Unified Network"]
+        subgraph FrontendTier["Frontend Container (Port 80)"]
+            NGINX["Nginx Web Server<br/>(Static Asset Hosting, Gzip, SPA Routing Fallback)"]
+        end
+
+        subgraph BackendTier["FastAPI Backend Container (Port 8000)"]
+            Uvicorn["Uvicorn ASGI Server"]
+            FastAPI["FastAPI Core App"]
+            CORS["CORS Middleware"]
+            AuthSec["JWT Auth & Security"]
+            Routers["REST API Routers<br/>(/vehicles, /bookings, /trips, /invoices, /profits...)"]
+            CompatLayer["Supabase/PostgREST Compatibility Router<br/>(/rest/v1/*, /auth/v1/*)"]
+            Scheduler["APScheduler Background Service<br/>(Compliance Expiry Checks every 60m)"]
+        end
+
+        subgraph DataTier["Database Container (Port 5432)"]
+            PG[("PostgreSQL 15 Database<br/>(Multi-Tenant Schema, Alembic Versioning)")]
+        end
+    end
+
+    SPA -->|"HTTP / HTTPS Requests (Port 80)"| NGINX
+    SPA -->|"Direct API Calls / REST (Port 8000)"| Uvicorn
+    NGINX -.->|"Proxies / Distributes Static HTML/JS"| SPA
+    Uvicorn --> FastAPI
+    FastAPI --> CORS
+    CORS --> AuthSec
+    AuthSec --> Routers
+    AuthSec --> CompatLayer
+    Routers -->|"SQLAlchemy 2.0 ORM (psycopg)"| PG
+    CompatLayer -->|"Direct Filter Translations"| PG
+    Scheduler -->|"Queries Expiring Docs & EMI"| PG
+
+    classDef clientStyle fill:#e0f2fe,stroke:#0284c7,stroke-width:2px;
+    classDef frontendStyle fill:#fef3c7,stroke:#d97706,stroke-width:2px;
+    classDef backendStyle fill:#dcfce7,stroke:#16a34a,stroke-width:2px;
+    classDef dataStyle fill:#ede9fe,stroke:#7c3aed,stroke-width:2px;
+
+    class SPA clientStyle;
+    class NGINX frontendStyle;
+    class Uvicorn,FastAPI,CORS,AuthSec,Routers,CompatLayer,Scheduler backendStyle;
+    class PG dataStyle;
+            </pre>
+        </div>
+        
+            </div>
+            <div class="bg-slate-50 dark:bg-slate-850 p-6 rounded-xl border border-slate-200/80 dark:border-slate-800">
+                <h3 class='text-lg font-bold text-slate-800 dark:text-slate-200 mt-4 mb-2'>Overview</h3><p class='text-slate-600 dark:text-slate-400 text-sm mb-2 leading-relaxed'>VahanOne is structured as a decoupled three-tier multi-tenant web platform containerized with Docker and Docker Compose. It separates client-side SPA rendering, RESTful business logic and scheduling, and relational data storage.</p><h3 class='text-lg font-bold text-slate-800 dark:text-slate-200 mt-4 mb-2'>Architectural Highlights</h3><p class='text-slate-600 dark:text-slate-400 text-sm mb-2 leading-relaxed'>1. **Containerized Network**: In local development and Docker Compose, services communicate over an internal bridge network (`db:5432` and `backend:8000`), with only ports 80 (Frontend) and 8000 (Backend) exposed to the host machine.</p><p class='text-slate-600 dark:text-slate-400 text-sm mb-2 leading-relaxed'>2. **Reverse Proxying**: In production Docker, Nginx acts as an HTTP server serving built SPA assets and redirecting all unhandled paths to `/index.html` to support HTML5 client-side history routing.</p><p class='text-slate-600 dark:text-slate-400 text-sm mb-2 leading-relaxed'>3. **Dual API Handling**: FastAPI handles native structured CRUD routers with Pydantic validation while concurrently serving a PostgREST-compatible translation engine (`/rest/v1/*`) to support client-side data querying without cloud dependencies.</p>
+            </div>
+        </section>
+    
+        <section id="backend-flow" class="scroll-mt-20 mb-16 pb-12 border-b border-slate-200 dark:border-slate-800">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">2. Layered Backend Flow</h2>
+                <a href="#backend-flow" class="text-xs text-indigo-500 hover:underline">Link</a>
+            </div>
+            <div class="mb-6">
+                
+        <div class="my-4 bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-x-auto">
+            <pre class="mermaid text-center">
+sequenceDiagram
+    autonumber
+    actor Client as Frontend Client
+    participant Router as Router<br/>(routers/bookings.py)
+    participant Dep as Dependencies<br/>(core/dependencies.py)
+    participant Schema as Schema Validator<br/>(schemas/booking.py)
+    participant Service as Business Service<br/>(services/booking_service.py)
+    participant Repo as DB Models & Queries<br/>(models.py & SQLAlchemy)
+    participant DB as PostgreSQL Database
+
+    Client->>Router: POST /bookings/ (JSON payload, Bearer Token)
+    
+    activate Router
+    Router->>Dep: get_current_user() & require_roles("admin", "member")
+    activate Dep
+    Dep->>Dep: Validate JWT, check token expiration & parse org_id
+    Dep-->>Router: Authenticated User Object
+    decrement Dep
+
+    Router->>Schema: Validate BookingCreate payload
+    activate Schema
+    Schema->>Schema: Validate date range (start_date < end_date), amount >= 0
+    Schema-->>Router: Validated Pydantic DTO
+    deactivate Schema
+
+    Router->>Service: create_booking_service(db, current_user, payload)
+    activate Service
+
+    Note over Service: 1. Customer-first Check
+    Service->>Repo: Lookup customer or auto-create Customer record
+    Repo->>DB: SELECT / INSERT INTO customers
+    DB-->>Repo: Customer ID
+
+    Note over Service: 2. Vehicle Availability & Conflict Detection
+    Service->>Repo: Query overlapping active bookings for vehicle_id
+    Repo->>DB: SELECT FROM bookings WHERE vehicle_id = :id AND status != 'cancelled'
+    DB-->>Repo: Existing schedules
+
+    Service->>Repo: Query overlapping maintenance schedule for vehicle_id
+    Repo->>DB: SELECT FROM maintenance_schedule WHERE vehicle_id = :id
+    DB-->>Repo: Maintenance windows
+
+    alt Conflict Detected
+        Service-->>Router: Raise HTTPException(400, "Vehicle is already booked or under maintenance")
+        Router-->>Client: 400 Bad Request
+    else No Conflict
+        Note over Service: 3. Create Booking & Audit Log
+        Service->>Repo: Instantiate Booking(organization_id=user.org_id, ...)
+        Repo->>DB: INSERT INTO bookings ... RETURNING id
+        DB-->>Repo: New Booking Row
+        
+        Service->>Repo: Create VehicleCalendarEvent & AuditLog
+        Repo->>DB: INSERT INTO vehicle_calendar_events ...
+        Repo->>DB: INSERT INTO audit_logs ...
+        
+        Service-->>Router: Booking ORM instance
+        deactivate Service
+
+        Router->>Schema: BookingResponse.from_orm(booking)
+        activate Schema
+        Schema-->>Router: JSON Serialization
+        deactivate Schema
+
+        Router-->>Client: 201 Created + JSON Response
+    end
+    deactivate Router
+            </pre>
+        </div>
+        
+            </div>
+            <div class="bg-slate-50 dark:bg-slate-850 p-6 rounded-xl border border-slate-200/80 dark:border-slate-800">
+                <h3 class='text-lg font-bold text-slate-800 dark:text-slate-200 mt-4 mb-2'>Overview</h3><p class='text-slate-600 dark:text-slate-400 text-sm mb-2 leading-relaxed'>VahanOne enforces a strict clean separation of concerns in the backend:</p><p class='text-slate-600 dark:text-slate-400 text-sm mb-2 leading-relaxed'>`HTTP Request -> Router -> Pydantic Schema Validation -> Service Layer (Business Logic & Conflicts) -> Repository / ORM -> Database Engine -> Response Model`.</p><p class='text-slate-600 dark:text-slate-400 text-sm mb-2 leading-relaxed'>Below is a detailed trace of a real core endpoint: `POST /bookings/` (Creating a new vehicle booking).</p><h3 class='text-lg font-bold text-slate-800 dark:text-slate-200 mt-4 mb-2'>Architectural Highlights</h3><li class='text-slate-600 dark:text-slate-400 text-sm ml-4 list-disc'>**Fail-Fast Validation**: Pydantic validates data types, date relationships, and negative numbers before any database connection is exercised.</li><li class='text-slate-600 dark:text-slate-400 text-sm ml-4 list-disc'>**Tenant Context Injection**: `organization_id` is never trusted from the client payload for data mutation; it is pulled directly from the validated JWT token inside the dependency layer.</li><li class='text-slate-600 dark:text-slate-400 text-sm ml-4 list-disc'>**Encapsulated Business Invariants**: Complex business rules (like checking driver availability and preventing scheduling during maintenance windows) reside strictly in `booking_service.py`, leaving routers thin and testable.</li>
+            </div>
+        </section>
+    
+        <section id="auth-multi" class="scroll-mt-20 mb-16 pb-12 border-b border-slate-200 dark:border-slate-800">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">3. Auth & Multi-Tenancy</h2>
+                <a href="#auth-multi" class="text-xs text-indigo-500 hover:underline">Link</a>
+            </div>
+            <div class="mb-6">
+                
+        <div class="my-4 bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-x-auto">
+            <pre class="mermaid text-center">
+flowchart TD
+    subgraph Onboarding["1. Organization Onboarding (/auth/organizations/register)"]
+        ReqOrg["POST Registration Data<br/>{org_name, admin_email, password}"] --> HashPwd["Hash Password<br/>(Passlib PBKDF2/Bcrypt)"]
+        HashPwd --> CreateOrg["Insert into organizations<br/>(Generate UUID)"]
+        CreateOrg --> CreateRoles["Create 'admin' & 'member' roles<br/>Assign default permissions"]
+        CreateRoles --> CreateAdmin["Insert into users & user_roles<br/>Link to Organization UUID"]
+        CreateAdmin --> CreateProfile["Insert into user_profiles<br/>(Display name & contact)"]
+    end
+
+    subgraph Authentication["2. Authentication Flow (/auth/login)"]
+        LoginReq["POST /auth/login<br/>{email, password, optional org_id}"] --> VerifyCreds["Verify Hashed Password<br/>& Check is_active == true"]
+        VerifyCreds --> GenTokens["Generate JWT Token Pair"]
+        GenTokens --> AccessTok["Access Token (15-60 min)<br/>Claims: {sub: user_id, org_id: UUID, roles: [admin]}"]
+        GenTokens --> RefreshTok["Refresh Token (30 days)<br/>Claims: {sub: user_id, version: 0, org_id: UUID}"]
+        AccessTok & RefreshTok --> AuthResp["Return Auth Tokens to Client<br/>Stored in localStorage"]
+    end
+
+    subgraph RequestCycle["3. Multi-Tenant Request Isolation"]
+        Req["API Request: GET /vehicles/<br/>Headers: Authorization: Bearer <token>"] --> ValToken["validate_token()<br/>Verify signature (HS256) & expiry"]
+        ValToken --> ExtractClaims["Extract sub (user_id) & org_id"]
+        ExtractClaims --> QueryUser["Verify user is active in DB<br/>Verify user.organization_id == token.org_id"]
+        QueryUser --> RBAC["require_roles('admin', 'member')<br/>Verify role permissions"]
+        RBAC --> ScopedQuery["SQLAlchemy Tenant Filtered Query:<br/>SELECT * FROM vehicles<br/>WHERE organization_id = :token_org_id<br/>AND deleted_at IS NULL"]
+        ScopedQuery --> TenantData["Return strictly isolated tenant data"]
+    end
+
+    classDef onboard fill:#e0f2fe,stroke:#0284c7,stroke-width:2px;
+    classDef auth fill:#fef3c7,stroke:#d97706,stroke-width:2px;
+    classDef req fill:#dcfce7,stroke:#16a34a,stroke-width:2px;
+
+    class ReqOrg,HashPwd,CreateOrg,CreateRoles,CreateAdmin,CreateProfile onboard;
+    class LoginReq,VerifyCreds,GenTokens,AccessTok,RefreshTok,AuthResp auth;
+    class Req,ValToken,ExtractClaims,QueryUser,RBAC,ScopedQuery,TenantData req;
+            </pre>
+        </div>
+        
+            </div>
+            <div class="bg-slate-50 dark:bg-slate-850 p-6 rounded-xl border border-slate-200/80 dark:border-slate-800">
+                <h3 class='text-lg font-bold text-slate-800 dark:text-slate-200 mt-4 mb-2'>Overview</h3><p class='text-slate-600 dark:text-slate-400 text-sm mb-2 leading-relaxed'>VahanOne implements a **shared-database, pooled-schema multi-tenant architecture**. Each tenant is represented as an `Organization`. Every business entity (vehicles, drivers, bookings, invoices) contains an `organization_id` foreign key. Tenant isolation is enforced at the application layer via JWT claims and database indexes, supplemented by PostgreSQL Row-Level Security (RLS) where applicable.</p><h3 class='text-lg font-bold text-slate-800 dark:text-slate-200 mt-4 mb-2'>Security Invariants</h3><p class='text-slate-600 dark:text-slate-400 text-sm mb-2 leading-relaxed'>1. **Zero Trust Client Identity**: The frontend cannot alter its tenant context. Every mutation relies strictly on `current_user.organization_id` derived cryptographically from the signed JWT access token.</p><p class='text-slate-600 dark:text-slate-400 text-sm mb-2 leading-relaxed'>2. **Compound Unique Constraints**: Uniqueness is scoped per tenant, not globally. For example:</p><li class='text-slate-600 dark:text-slate-400 text-sm ml-4 list-disc'>`UniqueConstraint('organization_id', 'vehicle_number', name='uq_vehicle_org_number')`</li><li class='text-slate-600 dark:text-slate-400 text-sm ml-4 list-disc'>`UniqueConstraint('organization_id', 'phone_number', name='uq_customer_org_phone')`</li><p class='text-slate-600 dark:text-slate-400 text-sm mb-2 leading-relaxed'>This allows different transport companies to register standard local vehicle plates without collision.</p><p class='text-slate-600 dark:text-slate-400 text-sm mb-2 leading-relaxed'>3. **Token Invalidation**: Refresh tokens include a `refresh_token_version` integer column on the user table. Changing this integer immediately invalidates all active sessions for that user.</p>
+            </div>
+        </section>
+    
+        <section id="db-er" class="scroll-mt-20 mb-16 pb-12 border-b border-slate-200 dark:border-slate-800">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">4. Database ER Diagram</h2>
+                <a href="#db-er" class="text-xs text-indigo-500 hover:underline">Link</a>
+            </div>
+            <div class="mb-6">
+                
+        <div class="my-4 bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-x-auto">
+            <pre class="mermaid text-center">
+erDiagram
+    ORGANIZATIONS ||--o{ USERS : "employs"
+    ORGANIZATIONS ||--o{ ROLES : "defines"
+    ROLES ||--o{ USER_ROLES : "assigned_in"
+    USERS ||--o{ USER_ROLES : "has"
+    ROLES ||--o{ ROLE_PERMISSIONS : "contains"
+    PERMISSIONS ||--o{ ROLE_PERMISSIONS : "mapped_in"
+
+    ORGANIZATIONS ||--o{ CUSTOMERS : "owns"
+    ORGANIZATIONS ||--o{ VEHICLES : "owns"
+    ORGANIZATIONS ||--o{ DRIVERS : "employs"
+    ORGANIZATIONS ||--o{ TRIP_PACKAGES : "configures"
+
+    CUSTOMERS ||--o{ BOOKINGS : "places"
+    VEHICLES ||--o{ BOOKINGS : "allocated_to"
+    DRIVERS ||--o{ BOOKINGS : "assigned_to"
+
+    VEHICLES ||--o{ MAINTENANCE_SCHEDULE : "undergoes"
+    VEHICLES ||--o{ VEHICLE_CALENDAR_EVENTS : "scheduled_in"
+    BOOKINGS ||--o{ VEHICLE_CALENDAR_EVENTS : "spawns"
+    MAINTENANCE_SCHEDULE ||--o| VEHICLE_CALENDAR_EVENTS : "blocks"
+
+    BOOKINGS ||--o{ TRIPS : "executed_via"
+    VEHICLES ||--o{ TRIPS : "travels"
+    TRIP_PACKAGES ||--o{ TRIPS : "billed_under"
+
+    TRIPS ||--o{ EXPENSES : "incurs"
+    BOOKINGS ||--o{ EXPENSES : "attributed_to"
+    VEHICLES ||--o{ EXPENSES : "charged_to"
+
+    TRIPS ||--o| TRIP_PROFIT_SUMMARY : "generates"
+    VEHICLES ||--o{ TRIP_PROFIT_SUMMARY : "recorded_for"
+    VEHICLES ||--o{ VEHICLE_DAILY_PROFIT : "aggregates_daily"
+    VEHICLES ||--o{ VEHICLE_MONTHLY_PROFIT : "aggregates_monthly"
+
+    CUSTOMERS ||--o{ INVOICES : "billed_to"
+    TRIPS ||--o| INVOICES : "finalized_as"
+    BOOKINGS ||--o{ INVOICES : "originates_from"
+    INVOICES ||--o{ INVOICE_ITEMS : "contains"
+    INVOICES ||--o{ PAYMENTS : "collected_via"
+
+    REMINDER_RULES ||--o{ REMINDERS : "triggers"
+    REMINDERS ||--o{ NOTIFICATION_EVENTS : "dispatches"
+
+    ORGANIZATIONS {
+        uuid id PK
+        string name UK
+        boolean is_active
+    }
+
+    USERS {
+        uuid id PK
+        uuid organization_id FK
+        string email
+        string hashed_password
+        boolean is_active
+        boolean is_superuser
+        int refresh_token_version
+    }
+
+    CUSTOMERS {
+        bigint id PK
+        uuid organization_id FK
+        string customer_name
+        string company
+        string phone_number
+        string gst_number
+        string city
+        string state
+    }
+
+    VEHICLES {
+        bigint id PK
+        uuid organization_id FK
+        string vehicle_number UK
+        string vehicle_type
+        string fuel_type
+        timestamp insurance_expiry_date
+        timestamp permit_expiry_date
+        timestamp fc_expiry_date
+        timestamp pollution_expiry_date
+        timestamp road_tax_expiry_date
+        timestamp service_due_date
+        numeric emi_amount
+        int emi_due_day
+    }
+
+    DRIVERS {
+        bigint id PK
+        uuid organization_id FK
+        string name
+        string license_number UK
+        timestamp license_expiry
+        string contact_number
+    }
+
+    BOOKINGS {
+        bigint id PK
+        uuid organization_id FK
+        bigint customer_id FK
+        bigint vehicle_id FK
+        bigint driver_id FK
+        string pickup_location
+        string destination
+        timestamp start_date
+        timestamp end_date
+        numeric booking_amount
+        string status
+    }
+
+    TRIPS {
+        bigint id PK
+        uuid organization_id FK
+        bigint booking_id FK
+        bigint vehicle_id FK
+        bigint package_id FK
+        bigint start_km
+        bigint end_km
+        numeric distance_km
+        numeric extra_km_amount
+        numeric driver_bata
+        numeric toll_amount
+        numeric advance_received
+        numeric grand_total
+        numeric trip_revenue
+        string status
+    }
+
+    EXPENSES {
+        bigint id PK
+        uuid organization_id FK
+        bigint trip_id FK
+        bigint booking_id FK
+        bigint vehicle_id FK
+        enum category
+        numeric amount
+        timestamp expense_date
+    }
+
+    TRIP_PROFIT_SUMMARY {
+        bigint id PK
+        uuid organization_id FK
+        bigint trip_id FK
+        bigint vehicle_id FK
+        numeric trip_revenue
+        numeric total_expense
+        numeric trip_profit
+        date profit_date
+        int year
+        int month
+    }
+
+    INVOICES {
+        bigint id PK
+        uuid organization_id FK
+        bigint customer_id FK
+        bigint trip_id FK
+        bigint booking_id FK
+        string invoice_number UK
+        timestamp invoice_date
+        numeric subtotal
+        numeric tax_amount
+        numeric total_amount
+        numeric advance_received
+        string status
+    }
+
+    PAYMENTS {
+        bigint id PK
+        uuid organization_id FK
+        bigint invoice_id FK
+        bigint amount_cents
+        string method
+        string transaction_ref
+    }
+
+    REMINDER_RULES {
+        bigint id PK
+        uuid organization_id FK
+        string name
+        string category
+        string event_type
+        int trigger_days_before
+        int priority
+    }
+
+    REMINDERS {
+        bigint id PK
+        uuid organization_id FK
+        bigint rule_id FK
+        string entity_type
+        bigint entity_id
+        timestamp reminder_date
+        timestamp due_date
+        string status
+        string message
+    }
+            </pre>
+        </div>
+        
+            </div>
+            <div class="bg-slate-50 dark:bg-slate-850 p-6 rounded-xl border border-slate-200/80 dark:border-slate-800">
+                <h3 class='text-lg font-bold text-slate-800 dark:text-slate-200 mt-4 mb-2'>Overview</h3><p class='text-slate-600 dark:text-slate-400 text-sm mb-2 leading-relaxed'>VahanOne operates on a normalized PostgreSQL schema with 27 relational tables. Core entities derive from three architectural base mixins:</p><li class='text-slate-600 dark:text-slate-400 text-sm ml-4 list-disc'>`TimestampMixin`: `created_at`, `updated_at` (automatic UTC timestamps)</li><li class='text-slate-600 dark:text-slate-400 text-sm ml-4 list-disc'>`TenantMixin`: `organization_id` (UUID foreign reference isolating every record)</li><li class='text-slate-600 dark:text-slate-400 text-sm ml-4 list-disc'>`SoftDeleteMixin`: `deleted_at` (preserving audit history on customers, vehicles, drivers)</li><h3 class='text-lg font-bold text-slate-800 dark:text-slate-200 mt-4 mb-2'>Key Schema Design Decisions</h3><p class='text-slate-600 dark:text-slate-400 text-sm mb-2 leading-relaxed'>1. **Financial Integrity**: Money amounts in Invoices, Trips, and Expenses use `Numeric(12, 2)` for precision, while Payment transactions use `BigInteger amount_cents` to eliminate floating-point rounding errors.</p><p class='text-slate-600 dark:text-slate-400 text-sm mb-2 leading-relaxed'>2. **Double Linkage (Bookings & Trips)**: An Invoice links to both `customer_id` and optional `trip_id` / `booking_id`. This allows invoicing ad-hoc direct bookings as well as multi-leg trip contracts.</p><p class='text-slate-600 dark:text-slate-400 text-sm mb-2 leading-relaxed'>3. **Soft Deletions**: Deleting a vehicle or driver preserves historical booking and trip revenue calculations via `deleted_at IS NULL` query filters.</p>
+            </div>
+        </section>
+    
+        <section id="booking-life" class="scroll-mt-20 mb-16 pb-12 border-b border-slate-200 dark:border-slate-800">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">5. Booking Lifecycle</h2>
+                <a href="#booking-life" class="text-xs text-indigo-500 hover:underline">Link</a>
+            </div>
+            <div class="mb-6">
+                
+        <div class="my-4 bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-x-auto">
+            <pre class="mermaid text-center">
+stateDiagram-v2
+    [*] --> BookingDraft: Customer requests travel
+    
+    state BookingCreation {
+        BookingDraft --> ConflictCheck: System asserts Vehicle & Date Range
+        ConflictCheck --> OverlapDetected: Overlapping Booking OR Maintenance Window
+        OverlapDetected --> [*]: Abort with HTTP 409 Conflict
+        ConflictCheck --> BookingConfirmed: Vehicle Available & Customer Verified
+    }
+
+    BookingConfirmed --> VehicleCalendarBlocked: Calendar event created (type: booking)
+    VehicleCalendarBlocked --> TripCreated: Trip initiated with start_km & Package
+    
+    state TripExecution {
+        TripCreated --> TripOngoing: Driver Dispatched (POST /trips/{id}/start)
+        TripOngoing --> InTransit: Vehicle on route (Fuel / Toll / Bata logged)
+        InTransit --> TripCompletionRequest: Trip Arrives at Destination
+        TripCompletionRequest --> ValidateOdometer: Submit end_km (must be >= start_km)
+        ValidateOdometer --> ComputeFinancials: Extra KM, Extra Hours, Night Charges, Tolls
+        ComputeFinancials --> TripCompleted: Status marked 'completed'
+    }
+
+    state InvoiceSettlement {
+        TripCompleted --> RecalculateProfit: Profit Engine updates trip_profit_summary
+        TripCompleted --> GenerateInvoice: Invoice created (subtotal + GST - advances)
+        GenerateInvoice --> InvoiceSent: Invoiced to Customer (Status: sent)
+        InvoiceSent --> PaymentRecorded: Payment added (Status: paid)
+        PaymentRecorded --> [*]
+    }
+            </pre>
+        </div>
+        
+        <div class="my-4 bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-x-auto">
+            <pre class="mermaid text-center">
+sequenceDiagram
+    autonumber
+    actor Dispatcher as Fleet Dispatcher
+    participant BookingSvc as Booking Service
+    participant VehicleSvc as Vehicle Service
+    participant TripSvc as Trip Service
+    participant ProfitSvc as Profit Engine
+    participant InvoiceSvc as Invoice Service
+    participant DB as PostgreSQL
+
+    Dispatcher->>BookingSvc: create_booking_service(vehicle_id, dates, customer)
+    BookingSvc->>VehicleSvc: check_vehicle_availability_service()
+    Note over VehicleSvc: Checks overlapping bookings AND maintenance_schedule
+    VehicleSvc-->>BookingSvc: Available (True)
+    BookingSvc->>DB: INSERT INTO bookings, vehicle_calendar_events
+    
+    Dispatcher->>TripSvc: create_trip_service(booking_id, package_id, start_km)
+    TripSvc->>DB: INSERT INTO trips (status: 'pending')
+    
+    Dispatcher->>TripSvc: start_trip_service(trip_id)
+    TripSvc->>DB: UPDATE trips SET status = 'ongoing', start_time = now()
+    
+    Dispatcher->>TripSvc: complete_trip_service(trip_id, end_km, end_time)
+    TripSvc->>TripSvc: calculate_trip_financials(package, km_used, hours_used)
+    TripSvc->>DB: UPDATE trips SET status = 'completed', grand_total = ...
+    
+    TripSvc->>ProfitSvc: recalculate_trip_profit(trip_id)
+    ProfitSvc->>DB: INSERT / UPDATE trip_profit_summary
+    
+    Dispatcher->>InvoiceSvc: create_invoice_from_trip(trip_id)
+    InvoiceSvc->>DB: INSERT INTO invoices, invoice_items
+    DB-->>Dispatcher: Invoice Ready for Payment
+            </pre>
+        </div>
+        
+            </div>
+            <div class="bg-slate-50 dark:bg-slate-850 p-6 rounded-xl border border-slate-200/80 dark:border-slate-800">
+                <h3 class='text-lg font-bold text-slate-800 dark:text-slate-200 mt-4 mb-2'>Overview</h3><p class='text-slate-600 dark:text-slate-400 text-sm mb-2 leading-relaxed'>The VahanOne booking lifecycle orchestrates customer reservations from creation through vehicle conflict checking, dispatch, odometer execution, financial calculation, and invoice generation.</p><h3 class='text-lg font-bold text-slate-800 dark:text-slate-200 mt-4 mb-2'>Detailed Lifecycle Sequence</h3><h3 class='text-lg font-bold text-slate-800 dark:text-slate-200 mt-4 mb-2'>Edge Cases Handled in Code</h3><p class='text-slate-600 dark:text-slate-400 text-sm mb-2 leading-relaxed'>1. **Odometer Rollback Prevention**: `end_km` must be strictly `>= start_km`, else returns `HTTP 400 Bad Request`.</p><p class='text-slate-600 dark:text-slate-400 text-sm mb-2 leading-relaxed'>2. **Duplicate Active Trip Prevention**: `_assert_no_active_trip_for_booking` prevents dispatching multiple concurrent trips for the same booking.</p><p class='text-slate-600 dark:text-slate-400 text-sm mb-2 leading-relaxed'>3. **Double Maintenance Check**: A vehicle under scheduled maintenance cannot be booked, and maintenance cannot be scheduled over an active confirmed booking.</p>
+            </div>
+        </section>
+    
+        <section id="invoice-gst" class="scroll-mt-20 mb-16 pb-12 border-b border-slate-200 dark:border-slate-800">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">6. Invoice & GST Flow</h2>
+                <a href="#invoice-gst" class="text-xs text-indigo-500 hover:underline">Link</a>
+            </div>
+            <div class="mb-6">
+                
+        <div class="my-4 bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-x-auto">
+            <pre class="mermaid text-center">
+flowchart TD
+    subgraph Trigger["1. Invoicing Trigger"]
+        CompletedTrip["Completed Trip<br/>(status: 'completed', distance_km, extras logged)"]
+        BookingDirect["Direct Booking<br/>(Flat rate booking without meter)"]
+    end
+
+    subgraph TaxEngine["2. Line Item & Tax Calculation"]
+        BaseItem["Base Fare / Package Amount<br/>(e.g., 8hr / 80km package)"]
+        ExtrasItem["Extra Charges<br/>- Extra KM & Extra Hours<br/>- Driver Bata<br/>- Night Charges<br/>- Toll & Parking"]
+        Subtotal["Subtotal = Base + Extras"]
+        
+        GSTDecision{"Tax Classification"}
+        GSTDecision -->|"Intra-State (Same State)"| SplitGST["CGST 6% + SGST 6% (Total 12%)<br/>or CGST 2.5% + SGST 2.5% (5% GTA)"]
+        GSTDecision -->|"Inter-State"| IGST["IGST 12% / 5%"]
+        
+        TotalCalc["Total Amount = Subtotal + Tax Amount"]
+        AdvanceDeduct["Balance Due = Total Amount - Advance Received"]
+    end
+
+    subgraph InvoicingPersistence["3. Storage & State Machine"]
+        GenInvNum["Generate Sequential Invoice Number<br/>(e.g., 10001, 10002... per organization)"]
+        InsertInv["INSERT INTO invoices<br/>(status: 'draft')"]
+        InsertItems["INSERT INTO invoice_items<br/>(line_total_cents stored in BigInt)"]
+    end
+
+    subgraph PaymentLifecycle["4. Payment Lifecycle"]
+        DraftState["Status: DRAFT<br/>(Editable line items, rates)"] -->|"Send to Customer"| SentState["Status: SENT<br/>(Awaiting settlement)"]
+        SentState -->|"Record Payment (Cents)"| CheckFull{"Balance == 0?"}
+        CheckFull -->|"No (Partial)"| SentState
+        CheckFull -->|"Yes (Fully Paid)"| PaidState["Status: PAID<br/>(Immutable, Locked against changes)"]
+        SentState -->|"Due Date Exceeded"| OverdueState["Status: OVERDUE<br/>(Triggers collections alert)"]
+    end
+
+    CompletedTrip --> BaseItem & ExtrasItem
+    BookingDirect --> BaseItem
+    BaseItem & ExtrasItem --> Subtotal
+    Subtotal --> GSTDecision
+    SplitGST & IGST --> TotalCalc
+    TotalCalc --> AdvanceDeduct
+    AdvanceDeduct --> GenInvNum
+    GenInvNum --> InsertInv --> InsertItems
+    InsertItems --> DraftState
+
+    classDef trigger fill:#e0f2fe,stroke:#0284c7,stroke-width:2px;
+    classDef calc fill:#fef3c7,stroke:#d97706,stroke-width:2px;
+    classDef persist fill:#dcfce7,stroke:#16a34a,stroke-width:2px;
+    classDef pay fill:#ede9fe,stroke:#7c3aed,stroke-width:2px;
+
+    class CompletedTrip,BookingDirect trigger;
+    class BaseItem,ExtrasItem,Subtotal,SplitGST,IGST,TotalCalc,AdvanceDeduct calc;
+    class GenInvNum,InsertInv,InsertItems persist;
+    class DraftState,SentState,PaidState,OverdueState pay;
+            </pre>
+        </div>
+        
+            </div>
+            <div class="bg-slate-50 dark:bg-slate-850 p-6 rounded-xl border border-slate-200/80 dark:border-slate-800">
+                <h3 class='text-lg font-bold text-slate-800 dark:text-slate-200 mt-4 mb-2'>Overview</h3><p class='text-slate-600 dark:text-slate-400 text-sm mb-2 leading-relaxed'>VahanOne provides an automated invoicing and tax calculation engine tailored to Indian transport logistics. It transforms completed trips into GST-compliant invoices with line items, deductions for advance payments, and payment state machines.</p><h3 class='text-lg font-bold text-slate-800 dark:text-slate-200 mt-4 mb-2'>Mathematical Formulae</h3><p class='text-slate-600 dark:text-slate-400 text-sm mb-2 leading-relaxed'>$$\text{Subtotal} = \text{Package Amount} + (\text{Extra KM} \times \text{Rate}) + (\text{Extra Hours} \times \text{Rate}) + \text{Driver Bata} + \text{Toll} + \text{Night Charges}$$</p><p class='text-slate-600 dark:text-slate-400 text-sm mb-2 leading-relaxed'>$$\text{Total Invoice Amount} = \text{Subtotal} + \text{Tax Amount}$$</p><p class='text-slate-600 dark:text-slate-400 text-sm mb-2 leading-relaxed'>$$\text{Balance Due} = \text{Total Invoice Amount} - \text{Advance Received}$$</p><h3 class='text-lg font-bold text-slate-800 dark:text-slate-200 mt-4 mb-2'>Security & Concurrency Highlights</h3><p class='text-slate-600 dark:text-slate-400 text-sm mb-2 leading-relaxed'>1. **Invoice Number Gap Prevention**: Sequential generation queries existing non-deleted numbers for the organization, finding the lowest available sequential index starting from `10001`.</p><p class='text-slate-600 dark:text-slate-400 text-sm mb-2 leading-relaxed'>2. **Double-Invoicing Guard**: A Unique Constraint on `(organization_id, trip_id)` and an explicit application check prevent multiple invoices against the same trip.</p><p class='text-slate-600 dark:text-slate-400 text-sm mb-2 leading-relaxed'>3. **Immutability of Settled Invoices**: Once status transitions to `PAID`, all `PUT /invoices/{id}` updates are blocked with `HTTP 400 Bad Request`.</p>
+            </div>
+        </section>
+    
+        <section id="profit-engine" class="scroll-mt-20 mb-16 pb-12 border-b border-slate-200 dark:border-slate-800">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">7. Profit Engine Flow</h2>
+                <a href="#profit-engine" class="text-xs text-indigo-500 hover:underline">Link</a>
+            </div>
+            <div class="mb-6">
+                
+        <div class="my-4 bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-x-auto">
+            <pre class="mermaid text-center">
+flowchart TD
+    subgraph RevenueInput["1. Operational Inflows (Revenue)"]
+        PkgFare["Base Package Amount<br/>(e.g., Local / Outstation base)"]
+        OverKm["Extra KM Revenue<br/>(Rate × Distance exceeded)"]
+        OverHr["Extra Hours Revenue<br/>(Rate × Hours exceeded)"]
+        DriverBata["Driver Allowance / Bata"]
+        NightChg["Night Travel Charges"]
+        TollBilled["Toll & State Permits Billed to Customer"]
+    end
+
+    subgraph ExpenseInput["2. Variable Operating Outflows (Expenses)"]
+        FuelExp["Fuel Purchases<br/>(Diesel / CNG / Petrol receipts)"]
+        TollExp["FASTag / Toll Plaza Charges"]
+        ParkingExp["Parking & Entry Taxes"]
+        MaintExp["En-route Maintenance / Repairs"]
+        DriverBataPaid["Driver Daily Bata Disbursed"]
+    end
+
+    subgraph TripProfitEngine["3. Per-Trip Profit Calculation (recalculate_trip_profit)"]
+        GrossRev["Trip Revenue = Σ(Base + Extra KM + Extra Hr + Bata + Night + Toll)"]
+        TotalExp["Total Trip Expenses = Σ(Fuel + Toll + Parking + Maint + Misc)"]
+        NetTripProfit["Trip Profit = Trip Revenue - Total Expenses"]
+        
+        PersistTrip["UPSERT into trip_profit_summary<br/>{trip_id, vehicle_id, trip_revenue, total_expense, trip_profit, date, year, month}"]
+    end
+
+    subgraph VehicleRollup["4. Vehicle-Level Rollup (_rebuild_vehicle_aggregates)"]
+        RollupDaily["Aggregate by Date<br/>DELETE + INSERT INTO vehicle_daily_profit<br/>(daily revenue, expense, profit)"]
+        RollupMonthly["Aggregate by Year & Month<br/>DELETE + INSERT INTO vehicle_monthly_profit<br/>(monthly performance breakdown)"]
+    end
+
+    subgraph DashboardMetrics["5. Executive Fleet Dashboard"]
+        KPI1["Vehicle ROI & Margin %"]
+        KPI2["Monthly Fleet Net Profit"]
+        KPI3["Cost per KM (Fuel Efficiency Analysis)"]
+    end
+
+    PkgFare & OverKm & OverHr & DriverBata & NightChg & TollBilled --> GrossRev
+    FuelExp & TollExp & ParkingExp & MaintExp & DriverBataPaid --> TotalExp
+    GrossRev & TotalExp --> NetTripProfit
+    NetTripProfit --> PersistTrip
+    PersistTrip --> RollupDaily & RollupMonthly
+    RollupDaily & RollupMonthly --> KPI1 & KPI2 & KPI3
+
+    classDef rev fill:#dcfce7,stroke:#16a34a,stroke-width:2px;
+    classDef exp fill:#fee2e2,stroke:#dc2626,stroke-width:2px;
+    classDef calc fill:#e0f2fe,stroke:#0284c7,stroke-width:2px;
+    classDef rollup fill:#fef3c7,stroke:#d97706,stroke-width:2px;
+    classDef kpi fill:#ede9fe,stroke:#7c3aed,stroke-width:2px;
+
+    class PkgFare,OverKm,OverHr,DriverBata,NightChg,TollBilled,GrossRev rev;
+    class FuelExp,TollExp,ParkingExp,MaintExp,DriverBataPaid,TotalExp exp;
+    class NetTripProfit,PersistTrip calc;
+    class RollupDaily,RollupMonthly rollup;
+    class KPI1,KPI2,KPI3 kpi;
+            </pre>
+        </div>
+        
+            </div>
+            <div class="bg-slate-50 dark:bg-slate-850 p-6 rounded-xl border border-slate-200/80 dark:border-slate-800">
+                <h3 class='text-lg font-bold text-slate-800 dark:text-slate-200 mt-4 mb-2'>Overview</h3><p class='text-slate-600 dark:text-slate-400 text-sm mb-2 leading-relaxed'>The VahanOne Profit Engine bridges operational logistics with financial viability. It computes granular profitability across two orthogonal dimensions:</p><p class='text-slate-600 dark:text-slate-400 text-sm mb-2 leading-relaxed'>1. **Per-Trip Level**: Comparing realized trip billing against direct variable operating costs (fuel, tolls, driver bata, parking).</p><p class='text-slate-600 dark:text-slate-400 text-sm mb-2 leading-relaxed'>2. **Per-Vehicle Level**: Aggregating daily and monthly profit timelines to help fleet owners identify underperforming or high-maintenance vehicles.</p><h3 class='text-lg font-bold text-slate-800 dark:text-slate-200 mt-4 mb-2'>Calculation Formulas</h3><p class='text-slate-600 dark:text-slate-400 text-sm mb-2 leading-relaxed'>$$\text{Trip Revenue} = \text{Package Amount} + (\text{Extra KM} \times R_{\text{km}}) + (\text{Extra Hours} \times R_{\text{hr}}) + \text{Bata} + \text{Night} + \text{Toll}$$</p><p class='text-slate-600 dark:text-slate-400 text-sm mb-2 leading-relaxed'>$$\text{Total Expenses} = \sum \text{Fuel} + \sum \text{Toll} + \sum \text{Parking} + \sum \text{Maintenance} + \sum \text{Misc}$$</p><p class='text-slate-600 dark:text-slate-400 text-sm mb-2 leading-relaxed'>$$\text{Net Profit}_{\text{Trip}} = \text{Trip Revenue} - \text{Total Expenses}$$</p><p class='text-slate-600 dark:text-slate-400 text-sm mb-2 leading-relaxed'>$$\text{Monthly Vehicle Profit} = \sum_{i=1}^{N_{\text{trips}}} \text{Trip Profit}_i$$</p><h3 class='text-lg font-bold text-slate-800 dark:text-slate-200 mt-4 mb-2'>Performance & Optimization Notes</h3><li class='text-slate-600 dark:text-slate-400 text-sm ml-4 list-disc'>**Instant Recalculation**: Every time a new expense is logged (`POST /expenses/`) or a trip is completed (`POST /trips/{id}/complete`), `profit_service.recalculate_trip_profit` runs synchronously within the transaction.</li><li class='text-slate-600 dark:text-slate-400 text-sm ml-4 list-disc'>**Aggregated Projections**: The system caches daily and monthly totals in `vehicle_daily_profit` and `vehicle_monthly_profit` tables. This guarantees $O(1)$ response times for the front-end monthly charts without scanning millions of individual trip records.</li>
+            </div>
+        </section>
+    
+        <section id="compliance-sched" class="scroll-mt-20 mb-16 pb-12 border-b border-slate-200 dark:border-slate-800">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">8. Compliance Scheduler</h2>
+                <a href="#compliance-sched" class="text-xs text-indigo-500 hover:underline">Link</a>
+            </div>
+            <div class="mb-6">
+                
+        <div class="my-4 bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-x-auto">
+            <pre class="mermaid text-center">
+flowchart TD
+    subgraph SchedulerThread["1. Background Daemon Loop (reminder_scheduler.py)"]
+        StartLoop["Scheduler Started on FastAPI Boot<br/>(start_reminder_scheduler)"] --> SleepTick["Sleep Interval (default: 60 mins)"]
+        SleepTick --> OpenDBSession["Open Isolated SQLAlchemy Session"]
+        OpenDBSession --> FetchActiveOrgs["Query All Active Organizations<br/>(Organization.is_active == True)"]
+    end
+
+    subgraph EvaluationEngine["2. Compliance Rule Evaluation (reminder_service.py)"]
+        FetchActiveOrgs --> IterateOrgs["For Each Organization UUID"]
+        IterateOrgs --> LoadRules["Load Default & Custom Reminder Rules<br/>(30-day, 15-day, 7-day, 0-day thresholds)"]
+        
+        LoadRules --> CheckVehicles["Query Vehicles in Tenant"]
+        CheckVehicles --> RuleRC["Insurance Expiry Check<br/>(insurance_expiry_date)"]
+        CheckVehicles --> RuleFC["Fitness Certificate Check<br/>(fc_expiry_date)"]
+        CheckVehicles --> RulePermit["Permit Expiry Check<br/>(permit_expiry_date)"]
+        CheckVehicles --> RulePUC["Pollution Certificate Check<br/>(pollution_expiry_date)"]
+        CheckVehicles --> RuleTax["Road Tax Check<br/>(road_tax_expiry_date)"]
+        CheckVehicles --> RuleEMI["Vehicle EMI Due Check<br/>(_calculate_next_emi_due_datetime)"]
+        CheckVehicles --> RuleMaint["Service & Tyre Change Due"]
+    end
+
+    subgraph DedupAndAlert["3. Deduplication & Alert Generation"]
+        RuleRC & RuleFC & RulePermit & RulePUC & RuleTax & RuleEMI & RuleMaint --> EvaluateThreshold{"Current Date >= (Due Date - Threshold Days)?"}
+        EvaluateThreshold -->|"No"| Ignore["Skip (Compliant)"]
+        EvaluateThreshold -->|"Yes"| CheckExists{"Reminder Already Exists in DB<br/>for entity_id + due_date?"}
+        CheckExists -->|"Yes"| SkipDup["Skip (Prevent Spam)"]
+        CheckExists -->|"No"| CreateReminder["Create Reminder Record<br/>status: 'pending'"]
+    end
+
+    subgraph DispatchLayer["4. Notifications & UI Alerts"]
+        CreateReminder --> DBReminders["INSERT INTO reminders"]
+        CreateReminder --> DBNotifs["INSERT INTO notification_events<br/>(Channel: IN_APP / EMAIL / SMS)"]
+        DBReminders --> UIDash["Fleet Dashboard Badge<br/>(Amber for < 30 days, Red for < 7 days)"]
+    end
+
+    classDef sched fill:#e0f2fe,stroke:#0284c7,stroke-width:2px;
+    classDef rules fill:#fef3c7,stroke:#d97706,stroke-width:2px;
+    classDef alert fill:#fee2e2,stroke:#dc2626,stroke-width:2px;
+    classDef ui fill:#dcfce7,stroke:#16a34a,stroke-width:2px;
+
+    class StartLoop,SleepTick,OpenDBSession,FetchActiveOrgs,IterateOrgs sched;
+    class LoadRules,CheckVehicles,RuleRC,RuleFC,RulePermit,RulePUC,RuleTax,RuleEMI,RuleMaint rules;
+    class EvaluateThreshold,CheckExists,CreateReminder,DBReminders,DBNotifs alert;
+    class UIDash ui;
+            </pre>
+        </div>
+        
+            </div>
+            <div class="bg-slate-50 dark:bg-slate-850 p-6 rounded-xl border border-slate-200/80 dark:border-slate-800">
+                <h3 class='text-lg font-bold text-slate-800 dark:text-slate-200 mt-4 mb-2'>Overview</h3><p class='text-slate-600 dark:text-slate-400 text-sm mb-2 leading-relaxed'>VahanOne features an automated compliance and document expiry monitoring engine. It protects transport operators against heavy regulatory fines and vehicle impoundment under the Indian Motor Vehicles Act by tracking statutory renewals (RC, FC, Insurance, National Permits, PUC, Road Tax, EMI).</p><blockquote class='border-l-4 border-indigo-500 pl-4 py-1 my-2 bg-indigo-50 dark:bg-slate-800 text-sm text-slate-700 dark:text-slate-300 italic rounded-r'>[!NOTE]</blockquote><blockquote class='border-l-4 border-indigo-500 pl-4 py-1 my-2 bg-indigo-50 dark:bg-slate-800 text-sm text-slate-700 dark:text-slate-300 italic rounded-r'>**Code vs. README Discrepancy**: While the original README mentions `APScheduler`, the production codebase executes a dedicated Python background daemon thread (`backend/app/services/reminder_scheduler.py`) using `threading.Thread` with a configurable sleep interval (`settings.reminder_scheduler_interval_minutes = 60`), guaranteeing lightweight execution without external broker dependencies.</blockquote><h3 class='text-lg font-bold text-slate-800 dark:text-slate-200 mt-4 mb-2'>Compliance Threshold Matrix</h3><p class='text-slate-600 dark:text-slate-400 text-sm mb-2 leading-relaxed'>| Statutory Document | Standard Indian Validity | System Warning Thresholds | Risk if Unaddressed |</p><p class='text-slate-600 dark:text-slate-400 text-sm mb-2 leading-relaxed'>| :--- | :--- | :--- | :--- |</p><p class='text-slate-600 dark:text-slate-400 text-sm mb-2 leading-relaxed'>| **Vehicle Insurance** | 1 Year (Comprehensive/Third-party) | **30 days, 15 days, 7 days** | Vehicle impounded; claims denied |</p><p class='text-slate-600 dark:text-slate-400 text-sm mb-2 leading-relaxed'>| **Fitness Certificate (FC)** | 1–2 Years (Commercial Vehicles) | **30 days, 15 days, 7 days** | Seizure of registration certificate |</p><p class='text-slate-600 dark:text-slate-400 text-sm mb-2 leading-relaxed'>| **State / National Permit** | 1–5 Years | **30 days, 15 days, 7 days** | Heavy inter-state border penalties |</p><p class='text-slate-600 dark:text-slate-400 text-sm mb-2 leading-relaxed'>| **Pollution (PUC)** | 6 Months | **15 days, 7 days, 1 day** | ₹10,000 fine under amended MV Act |</p><p class='text-slate-600 dark:text-slate-400 text-sm mb-2 leading-relaxed'>| **Road Tax** | Quarterly / Annual | **30 days, 15 days, 7 days** | Compound penalty interest |</p><p class='text-slate-600 dark:text-slate-400 text-sm mb-2 leading-relaxed'>| **Vehicle Loan EMI** | Monthly | **7 days, 3 days, Due Date** | Credit rating penalty; repossession risk |</p><h3 class='text-lg font-bold text-slate-800 dark:text-slate-200 mt-4 mb-2'>Deduplication Strategy</h3><p class='text-slate-600 dark:text-slate-400 text-sm mb-2 leading-relaxed'>To avoid bombarding fleet managers with duplicate notifications every 60 minutes, the query explicitly checks:</p><p class='text-slate-600 dark:text-slate-400 text-sm mb-2 leading-relaxed'>```python</p><p class='text-slate-600 dark:text-slate-400 text-sm mb-2 leading-relaxed'>existing = reminder_repository.find_existing_reminder(</p><p class='text-slate-600 dark:text-slate-400 text-sm mb-2 leading-relaxed'>db,</p><p class='text-slate-600 dark:text-slate-400 text-sm mb-2 leading-relaxed'>organization_id=org_id,</p><p class='text-slate-600 dark:text-slate-400 text-sm mb-2 leading-relaxed'>rule_id=rule.id,</p><p class='text-slate-600 dark:text-slate-400 text-sm mb-2 leading-relaxed'>entity_type="vehicle",</p><p class='text-slate-600 dark:text-slate-400 text-sm mb-2 leading-relaxed'>entity_id=vehicle.id,</p><p class='text-slate-600 dark:text-slate-400 text-sm mb-2 leading-relaxed'>due_date=due_date</p><p class='text-slate-600 dark:text-slate-400 text-sm mb-2 leading-relaxed'>)</p><p class='text-slate-600 dark:text-slate-400 text-sm mb-2 leading-relaxed'>```</p><p class='text-slate-600 dark:text-slate-400 text-sm mb-2 leading-relaxed'>If an active or acknowledged reminder already exists for that specific due date, the scheduler idempotently skips creating another.</p>
+            </div>
+        </section>
+    
+        <section id="frontend-flow" class="scroll-mt-20 mb-16 pb-12 border-b border-slate-200 dark:border-slate-800">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">9. Frontend Flow</h2>
+                <a href="#frontend-flow" class="text-xs text-indigo-500 hover:underline">Link</a>
+            </div>
+            <div class="mb-6">
+                
+        <div class="my-4 bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-x-auto">
+            <pre class="mermaid text-center">
+flowchart TD
+    subgraph Browser["1. Client Initialization"]
+        IndexHTML["index.html (Entrypoint)"] --> MainTSX["main.tsx (ReactDOM.createRoot)"]
+        MainTSX --> Router["BrowserRouter (React Router v6)"]
+        Router --> AppComp["App.tsx"]
+    end
+
+    subgraph RouteDispatch["2. Routing & Shell Layout"]
+        AppComp --> RouteCheck{"location.pathname<br/>isAuthPage?"}
+        RouteCheck -->|"Yes (/login, /signup)"| AuthPages["Auth Container<br/>(Login.tsx / Signup.tsx)"]
+        RouteCheck -->|"No (App Routes)"| AppShell["App Shell Container<br/>(Sidebar Navigation + Topbar)"]
+        
+        AppShell --> Pages["Page Routing"]
+        Pages --> P1["/dashboard (Dashboard.tsx)"]
+        Pages --> P2["/vehicles (Vehicles.tsx)"]
+        Pages --> P3["/drivers (Drivers.tsx)"]
+        Pages --> P4["/bookings (Bookings.tsx)"]
+        Pages --> P5["/calendar (Calendar.tsx)"]
+        Pages --> P6["/dispatch (Dispatch.tsx)"]
+        Pages --> P7["/expenses (Expenses.tsx)"]
+        Pages --> P8["/profit (Profit.tsx)"]
+        Pages --> P9["/invoices (Invoices.tsx)"]
+        Pages --> P10["/renewals (Renewals.tsx)"]
+    end
+
+    subgraph StateHooks["3. Hooks & State Layer"]
+        P1 --> UseDash["useDashboard()<br/>Aggregates vehicle counts, active trips, reminders, cash flow"]
+        AppShell --> UseAuth["useAuth()<br/>Auth state, role checks, session persistence, logout()"]
+    end
+
+    subgraph ApiServiceLayer["4. API & Data Access Layer"]
+        UseDash --> DashSvc["dashboardService.ts"]
+        Pages --> DomainSvcs["Domain Services<br/>(vehicleService, tripService, bookingService, invoiceService)"]
+        
+        DashSvc & DomainSvcs --> AxiosClient["Axios HTTP Client (lib/api.ts)"]
+        DashSvc & DomainSvcs --> SupaClient["Supabase JS Client (lib/supabase.ts)"]
+    end
+
+    subgraph Interceptors["5. Axios Token Interceptor & Auto-Refresh"]
+        AxiosClient --> ReqInterceptor["Request Interceptor:<br/>Inject Authorization: Bearer <accessToken>"]
+        ReqInterceptor --> NetworkReq["HTTP Request to FastAPI Backend"]
+        NetworkReq --> RespInterceptor{"Response Status"}
+        RespInterceptor -->|"200 OK"| ReturnData["Deliver typed data to page state"]
+        RespInterceptor -->|"401 Unauthorized"| RefreshQueue["Queue Requests & Trigger POST /auth/refresh<br/>using stored refresh_token"]
+        RefreshQueue -->|"Success"| SaveNewTokens["Save new tokens & replay queued requests"]
+        RefreshQueue -->|"Failed"| ForceLogout["clearAuthStorage() & redirect to /login"]
+    end
+
+    classDef browser fill:#e0f2fe,stroke:#0284c7,stroke-width:2px;
+    classDef layout fill:#fef3c7,stroke:#d97706,stroke-width:2px;
+    classDef hooks fill:#dcfce7,stroke:#16a34a,stroke-width:2px;
+    classDef api fill:#ede9fe,stroke:#7c3aed,stroke-width:2px;
+    classDef net fill:#fee2e2,stroke:#dc2626,stroke-width:2px;
+
+    class IndexHTML,MainTSX,Router,AppComp browser;
+    class RouteCheck,AuthPages,AppShell,Pages,P1,P2,P3,P4,P5,P6,P7,P8,P9,P10 layout;
+    class UseDash,UseAuth hooks;
+    class DashSvc,DomainSvcs,AxiosClient,SupaClient api;
+    class ReqInterceptor,NetworkReq,RespInterceptor,ReturnData,RefreshQueue,SaveNewTokens,ForceLogout net;
+            </pre>
+        </div>
+        
+            </div>
+            <div class="bg-slate-50 dark:bg-slate-850 p-6 rounded-xl border border-slate-200/80 dark:border-slate-800">
+                <h3 class='text-lg font-bold text-slate-800 dark:text-slate-200 mt-4 mb-2'>Overview</h3><p class='text-slate-600 dark:text-slate-400 text-sm mb-2 leading-relaxed'>The VahanOne user interface is built as a single-page application (SPA) with **React 18**, **Vite**, **TypeScript**, and **Tailwind CSS**. It emphasizes responsive, low-latency fleet operations, optimistic client updates, token refresh management, and defensive error boundaries.</p><h3 class='text-lg font-bold text-slate-800 dark:text-slate-200 mt-4 mb-2'>State Management & Invariants</h3><p class='text-slate-600 dark:text-slate-400 text-sm mb-2 leading-relaxed'>1. **No External Redux Overhead**: Local and custom hook state (`useState`, `useEffect`, `useCallback`) is used to keep bundle size small and render times instantaneous.</p><p class='text-slate-600 dark:text-slate-400 text-sm mb-2 leading-relaxed'>2. **Silent Refresh Interceptor**: `lib/api.ts` implements a subscriber queue (`subscribeTokenRefresh` and `onRefreshed`). If multiple parallel requests fail with `401`, only a single `POST /auth/refresh` is dispatched; upon resolution, all waiting requests retry seamlessly without user disruption.</p><p class='text-slate-600 dark:text-slate-400 text-sm mb-2 leading-relaxed'>3. **Dual Protocol Compatibility**: Frontend can communicate directly with FastAPI REST endpoints (`/bookings`, `/trips`) as well as the Supabase compatibility endpoints (`/rest/v1/*`), allowing seamless interoperability regardless of deployment target.</p>
+            </div>
+        </section>
+    
+        <section id="cicd-deploy" class="scroll-mt-20 mb-16 pb-12 border-b border-slate-200 dark:border-slate-800">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">10. CI/CD & Deployment</h2>
+                <a href="#cicd-deploy" class="text-xs text-indigo-500 hover:underline">Link</a>
+            </div>
+            <div class="mb-6">
+                
+        <div class="my-4 bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-x-auto">
+            <pre class="mermaid text-center">
+flowchart TD
+    subgraph Developer["1. Local Development"]
+        Dev["Developer working locally<br/>(start.sh / start.bat / Docker Compose)"]
+        GitCommit["git commit -m 'feat: ...'"]
+        GitPush["git push origin main"]
+        Dev --> GitCommit --> GitPush
+    end
+
+    subgraph GitHubActions["2. GitHub Actions CI (.github/workflows/ci.yml)"]
+        GitPush --> TriggerCI["Trigger on push to main / deploy-ready"]
+        
+        subgraph BackendJob["Backend CI (Python 3.11)"]
+            PySetup["Set up Python 3.11 & Pip Cache"]
+            FlakeLint["Flake8 Code Linting"]
+            PytestSuite["Pytest Test Suite (66 tests)<br/>(In-memory SQLite isolation)"]
+            PySetup --> FlakeLint --> PytestSuite
+        end
+
+        subgraph FrontendJob["Frontend CI (Node 18/20)"]
+            NodeSetup["Set up Node & NPM Cache"]
+            TypeCheck["TypeScript Strict Check (tsc --noEmit)"]
+            ViteBuild["Production Build (vite build)"]
+            NodeSetup --> TypeCheck --> ViteBuild
+        end
+
+        TriggerCI --> BackendJob & FrontendJob
+    end
+
+    subgraph CloudDeploy["3. Render Cloud Deployment (render.yaml Blueprint)"]
+        ViteBuild & PytestSuite -->|"CI Passes (Green)"| RenderWebhook["Render Auto-Deploy Webhook"]
+        
+        subgraph ProvisionDB["Postgres Database (vahanone-db)"]
+            PGInit["Spin up PostgreSQL 15 Instance"]
+        end
+
+        subgraph DeployBackend["Backend Web Service (vahanone-backend)"]
+            PullBackend["Pull backend/ code & pip install"]
+            AutoMigrate["alembic upgrade head<br/>(Apply database migrations)"]
+            AutoSeed["python seed_demo_data.py<br/>(Seed Indian test fleet)"]
+            RunUvicorn["uvicorn app.main:app --port $PORT<br/>(Start ASGI Web Server)"]
+            PullBackend --> AutoMigrate --> AutoSeed --> RunUvicorn
+        end
+
+        subgraph DeployFrontend["Frontend Static Site (vahanone-frontend)"]
+            PullFrontend["Pull frontend/ code & npm install"]
+            BuildDist["npm run build -> dist/"]
+            NginxEdge["Render CDN / Edge Hosting<br/>(SPA Rewrites: /* -> /index.html)"]
+            PullFrontend --> BuildDist --> NginxEdge
+        end
+
+        RenderWebhook --> ProvisionDB
+        ProvisionDB --> DeployBackend
+        DeployBackend --> DeployFrontend
+    end
+
+    subgraph LiveUsers["4. Live Public URL Access"]
+        DeployFrontend --> PublicApp["https://vahanone-frontend.onrender.com"]
+        DeployBackend --> PublicDocs["https://vahanone-backend.onrender.com/docs"]
+    end
+
+    classDef dev fill:#e0f2fe,stroke:#0284c7,stroke-width:2px;
+    classDef ci fill:#fef3c7,stroke:#d97706,stroke-width:2px;
+    classDef cloud fill:#dcfce7,stroke:#16a34a,stroke-width:2px;
+    classDef live fill:#ede9fe,stroke:#7c3aed,stroke-width:2px;
+
+    class Dev,GitCommit,GitPush dev;
+    class TriggerCI,PySetup,FlakeLint,PytestSuite,NodeSetup,TypeCheck,ViteBuild ci;
+    class RenderWebhook,PGInit,PullBackend,AutoMigrate,AutoSeed,RunUvicorn,PullFrontend,BuildDist,NginxEdge cloud;
+    class PublicApp,PublicDocs live;
+            </pre>
+        </div>
+        
+            </div>
+            <div class="bg-slate-50 dark:bg-slate-850 p-6 rounded-xl border border-slate-200/80 dark:border-slate-800">
+                <h3 class='text-lg font-bold text-slate-800 dark:text-slate-200 mt-4 mb-2'>Overview</h3><p class='text-slate-600 dark:text-slate-400 text-sm mb-2 leading-relaxed'>The VahanOne deployment lifecycle ensures that every commit pushed to GitHub is automatically linted, type-checked, tested, built, containerized, and deployed to production cloud infrastructure with zero downtime.</p><h3 class='text-lg font-bold text-slate-800 dark:text-slate-200 mt-4 mb-2'>Production Pipeline Stages</h3><p class='text-slate-600 dark:text-slate-400 text-sm mb-2 leading-relaxed'>1. **Linting & Hygiene**: `flake8` enforces PEP8 formatting rules and catches undefined symbols and circular imports before any deployment begins.</p><p class='text-slate-600 dark:text-slate-400 text-sm mb-2 leading-relaxed'>2. **Type Safety Verification**: `tsc --noEmit` verifies strict TypeScript typing across all components, interfaces, and API responses.</p><p class='text-slate-600 dark:text-slate-400 text-sm mb-2 leading-relaxed'>3. **Database Migration Synchronization**: Database schema changes are version-controlled via Alembic revisions (`alembic/versions/`). During container boot or Render deployment, `alembic upgrade head` runs automatically before the web server begins accepting HTTP traffic.</p><p class='text-slate-600 dark:text-slate-400 text-sm mb-2 leading-relaxed'>4. **Zero-Downtime Deployment**: Render creates the new container instances, waits for HTTP `GET /` to return `200 OK`, and then swaps the DNS router to the new container without dropping in-flight client requests.</p>
+            </div>
+        </section>
+    
+        <section id="user-journey" class="scroll-mt-20 mb-16 pb-12 border-b border-slate-200 dark:border-slate-800">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">11. Fleet Owner Journey</h2>
+                <a href="#user-journey" class="text-xs text-indigo-500 hover:underline">Link</a>
+            </div>
+            <div class="mb-6">
+                
+        <div class="my-4 bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-x-auto">
+            <pre class="mermaid text-center">
+journey
+    title A Day in the Life of a Fleet Owner using VahanOne
+    section 08:00 AM - Morning Compliance & Status
+      Open Dashboard & review fleet availability: 5: Fleet Owner
+      Inspect amber/red compliance alerts (Insurance, FC, EMI): 4: Fleet Owner
+      Acknowledge driver duty schedules: 5: Fleet Owner
+    section 10:00 AM - Bookings & Dispatch
+      Receive corporate customer travel request: 5: Fleet Owner
+      Create new Booking in VahanOne: 5: Fleet Owner
+      System verifies vehicle conflict & calendar: 5: System
+      Assign Driver & Vehicle; mark Confirmed: 5: Fleet Owner
+    section 01:00 PM - Trip Execution & Expense Tracking
+      Driver arrives at pickup; start trip: 4: Driver
+      Log starting odometer reading (start_km): 4: Fleet Owner
+      Driver logs en-route diesel and toll plaza expenses: 4: Driver
+      Monitor active trips on live Dispatch board: 5: Fleet Owner
+    section 06:00 PM - Trip Settlement & Invoicing
+      Trip completed at destination; submit end_km: 5: Fleet Owner
+      System computes distance, extra KM, and driver bata: 5: System
+      Generate GST-compliant tax invoice: 5: Fleet Owner
+      WhatsApp/Email PDF invoice link to corporate client: 5: Fleet Owner
+    section 08:00 PM - Executive Profit & Review
+      Open Profit Engine dashboard: 5: Fleet Owner
+      Inspect Net Profit (Revenue - Fuel - Toll - Bata): 5: Fleet Owner
+      Review monthly profit trends per vehicle: 5: Fleet Owner
+      Identify top-earning vehicles & high-maintenance assets: 5: Fleet Owner
+            </pre>
+        </div>
+        
+        <div class="my-4 bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-x-auto">
+            <pre class="mermaid text-center">
+flowchart TD
+    subgraph Morning["08:00 AM — Operations & Compliance Check"]
+        Login["1. Log into VahanOne Dashboard"] --> ReviewAlerts["2. Check Compliance Expiry Badges<br/>(Insurance, FC, Road Tax, EMI)"]
+        ReviewAlerts --> ReviewFleet["3. Inspect Vehicle Calendar<br/>(See vehicles in transit vs available)"]
+    end
+
+    subgraph Midday["10:00 AM — Booking & Conflict Checking"]
+        ReviewFleet --> NewBooking["4. Create Booking (/bookings)<br/>Pickup, Destination, Dates, Rates"]
+        NewBooking --> SysConflict["5. System Conflict Engine<br/>Validates no overlapping trips or maintenance"]
+        SysConflict --> ConfirmDispatch["6. Assign Driver & Vehicle<br/>Calendar blocks time automatically"]
+    end
+
+    subgraph Afternoon["01:00 PM — Execution & Expense Logging"]
+        ConfirmDispatch --> TripStart["7. Start Trip (/trips/{id}/start)<br/>Record Start Odometer"]
+        TripStart --> LogExpense["8. Log En-route Expenses (/expenses)<br/>Diesel fuel receipts, Toll FASTag, Parking"]
+    end
+
+    subgraph Evening["06:00 PM — Settlement & Invoicing"]
+        LogExpense --> CompleteTrip["9. Complete Trip (/trips/{id}/complete)<br/>Input End Odometer reading"]
+        CompleteTrip --> CalcBill["10. System Financial Calculations<br/>Total Distance, Extra KM, Night Charges"]
+        CalcBill --> IssueInvoice["11. Generate Invoice (/invoices)<br/>Add 12% GST, deduct advances, send to client"]
+    end
+
+    subgraph Night["08:00 PM — Profit Analysis"]
+        IssueInvoice --> ViewProfit["12. Open Profit Dashboard (/profit)<br/>Inspect Vehicle Net Profit = Revenue - All Expenses"]
+        ViewProfit --> Optimize["13. Optimize Fleet Maintenance & Planning"]
+    end
+
+    classDef morning fill:#e0f2fe,stroke:#0284c7,stroke-width:2px;
+    classDef midday fill:#fef3c7,stroke:#d97706,stroke-width:2px;
+    classDef afternoon fill:#dcfce7,stroke:#16a34a,stroke-width:2px;
+    classDef evening fill:#ede9fe,stroke:#7c3aed,stroke-width:2px;
+    classDef night fill:#fee2e2,stroke:#dc2626,stroke-width:2px;
+
+    class Login,ReviewAlerts,ReviewFleet morning;
+    class NewBooking,SysConflict,ConfirmDispatch midday;
+    class TripStart,LogExpense afternoon;
+    class CompleteTrip,CalcBill,IssueInvoice evening;
+    class ViewProfit,Optimize night;
+            </pre>
+        </div>
+        
+            </div>
+            <div class="bg-slate-50 dark:bg-slate-850 p-6 rounded-xl border border-slate-200/80 dark:border-slate-800">
+                <h3 class='text-lg font-bold text-slate-800 dark:text-slate-200 mt-4 mb-2'>Overview</h3><p class='text-slate-600 dark:text-slate-400 text-sm mb-2 leading-relaxed'>This journey maps a typical day in the life of a commercial fleet owner or logistics operator (e.g., managing 10 to 50 passenger buses or commercial trucks in India) using VahanOne to drive operational efficiency and financial clarity.</p><h3 class='text-lg font-bold text-slate-800 dark:text-slate-200 mt-4 mb-2'>Detailed Workflow Diagram</h3><h3 class='text-lg font-bold text-slate-800 dark:text-slate-200 mt-4 mb-2'>Core Value Proposition Delivered to User</h3><p class='text-slate-600 dark:text-slate-400 text-sm mb-2 leading-relaxed'>1. **Zero Fine Exposure**: Compliance warnings 30 days ahead prevent sudden vehicle impoundment and police fines.</p><p class='text-slate-600 dark:text-slate-400 text-sm mb-2 leading-relaxed'>2. **Elimination of Double-Bookings**: Automatic vehicle calendar conflict checks eliminate customer booking overlapping errors.</p><p class='text-slate-600 dark:text-slate-400 text-sm mb-2 leading-relaxed'>3. **True Vehicle ROI Clarity**: Replaces fragmented WhatsApp slips and paper logbooks with exact rupee-for-rupee profitability per vehicle.</p>
+            </div>
+        </section>
+    
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+</html>
